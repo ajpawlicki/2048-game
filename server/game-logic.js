@@ -29,7 +29,7 @@ function placeTileRandomly(board, piecesPlacedLegend, n = 4) {
     col = getRandomBtwnZeroAndN(n);
   }
 
-  board[row][col] = getTwoOrFourRandom();
+  board[row][col] = getTwoOrFour();
 
   piecesPlacedLegend.count++;
   piecesPlacedLegend.rows.set(row, true);
@@ -52,7 +52,7 @@ function getRandomBtwnZeroAndN(n) {
   return Math.floor(Math.random() * n);
 };
 
-function getTwoOrFourRandom() {
+function getTwoOrFour() {
   return Math.random() < 0.8 ? 2 : 4;
 };
 
@@ -85,6 +85,6 @@ module.exports = {
   isVacantAtCoord,
   isValidBoardCoord,
   getRandomBtwnZeroAndN,
-  getTwoOrFourRandom,
+  getTwoOrFour,
   moveDown
 };
