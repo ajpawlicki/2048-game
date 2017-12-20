@@ -18,7 +18,8 @@ const piecesPlacedLegend = {
   cols: new Map()
 };
 
-function placeTileRandomly(board, piecesPlacedLegend, n = 4) {
+function placeTileRandomly(board, piecesPlacedLegend) {
+  const n = board.length;
   if (piecesPlacedLegend.count === (n * n)) return null;
   
   let row = null;
@@ -44,7 +45,7 @@ function isVacantAtCoord(board, row, col) {
   return isValidBoardCoord(board, row, col) && board[row][col] === null;
 };
 
-function isValidBoardCoord (board, row, col) {
+function isValidBoardCoord(board, row, col) {
   return board[row] && (board[row][col] || board[row][col] === null);
 };
 
@@ -56,21 +57,63 @@ function getTwoOrFour() {
   return Math.random() < 0.8 ? 2 : 4;
 };
 
-function moveDown(board, piecesPlacedLegend, n = 4) {
+function removeTile(board, row, col) {
+  if (!isValidBoardCoord(board, row, col)) throw new Error('Not a valid coordinate.');
+  
+  const savedNum = board[row][col];
+  board[row][col] = null;
+
+  return savedNum;
+};
+
+function placeTile(board, row, col, num) {
+  if (!isValidBoardCoord(board, row, col)) throw new Error('Not a valid coordinate.');
+  board[row][col] = num;
+};
+
+function neighborTilesAreSame(board, row1, col1, row2, col2) {
+  return isOccupiedAtCoord(board, row1, col1)
+    && isOccupiedAtCoord(board, row2, col2)
+    && board[row1][col1] === board[row2][col2];
+};
+
+function moveDown(board, piecesPlacedLegend) {
+  const n = board.length;
   const { cols } = piecesPlacedLegend;
+  const updatedRows = new Map();
 
   for (let [col] of cols) {
     for (let row = n - 1; row >= 0; row--) {
-      if (board[row][col] !== null) moveTileDown(board, row, col);
+      if (isOccupiedAtCoord(board, row, col)) {
+        let updatedRow = moveTileDown(board, row, col); 
+        updatedRows.set(updatedRow, true);
+      }
     }
   }
+  piecesPlacedLegend.rows = updatedRows;
 };
 
 function moveTileDown(board, row, col) {
+  let mergedFlag = false;
 
+  while (isVacantAtCoord(board, row + 1, col)
+    || (neighborTilesAreSame(board, row, col, row + 1, col) && !mergedFlag)) {
+    let savedTileNum = removeTile(board, row, col);
+    
+    if (savedTileNum === board[row + 1][col]) {
+      savedTileNum *= 2;
+      mergedFlag = true;
+    }
+
+    placeTile(board, row + 1, col, savedTileNum);
+
+    row++;
+  }
+
+  return row;
 };
 
-function moveRight() {
+function moveUp() {
 
 };
 
