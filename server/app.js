@@ -6,7 +6,7 @@ const {
   placeTileRandomly,
   moveDown,
   moveUp
-} = require('./game-logic');
+} = require('./game/game-logic');
 
 let gameState = {
   tileCount: 0,
