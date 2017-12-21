@@ -66,7 +66,7 @@ function moveDown(board, gameState) {
   for (let [col, val] of cols) {
     for (let row = n - 1; row >= 0; row--) {
       if (isOccupiedAtCoord(board, row, col)) {
-        let updatedRow = moveTileDown(board, row, col, gameState);
+        let updatedRow = moveTileVertically(board, gameState, row, col, 1);
         rows.set(updatedRow, true);
       }
     }
@@ -81,26 +81,26 @@ function moveDown(board, gameState) {
   }
 };
 
-function moveTileDown(board, row, col, gameState) {
+function moveTileVertically(board, gameState, row, col, rowDelta) {
   const { currentMove } = gameState;
   const { mergedRows } = currentMove;
 
-  while (isVacantAtCoord(board, row + 1, col) || (neighborTilesAreSame(board, row, col, row + 1, col)
-    && !mergedRows.has(row) && !mergedRows.has(row + 1))) {
+  while (isVacantAtCoord(board, row + rowDelta, col) || (neighborTilesAreSame(board, row, col, row + rowDelta, col)
+    && !mergedRows.has(row) && !mergedRows.has(row + rowDelta))) {
     let savedTileNum = removeTile(board, row, col);
     
-    if (savedTileNum === board[row + 1][col]) {
+    if (savedTileNum === board[row + rowDelta][col]) {
       savedTileNum *= 2;
 
       gameState.tileCount--;
-      mergedRows.set(row + 1, true);
+      mergedRows.set(row + rowDelta, true);
     }
 
-    placeTile(board, row + 1, col, savedTileNum);
+    placeTile(board, row + rowDelta, col, savedTileNum);
 
     if (!currentMove.boardHasChanged) currentMove.boardHasChanged = true;
 
-    row++;
+    row += rowDelta;
   }
 
   return row;
@@ -114,7 +114,7 @@ function moveUp(board, gameState) {
   for (let [col, val] of cols) {
     for (let row = 0; row < n; row++) {
       if (isOccupiedAtCoord(board, row, col)) {
-        let updatedRow = moveTileUp(board, row, col, gameState); 
+        let updatedRow = moveTileVertically(board, gameState, row, col, -1);
         rows.set(updatedRow, true);
       }
     }
@@ -127,31 +127,6 @@ function moveUp(board, gameState) {
     
     currentMove.boardHasChanged = false;
   }
-};
-
-function moveTileUp(board, row, col, gameState) {
-  const { currentMove } = gameState;
-  const { mergedRows } = currentMove;
-
-  while (isVacantAtCoord(board, row - 1, col) || (neighborTilesAreSame(board, row, col, row - 1, col)
-    && !mergedRows.has(row) && !mergedRows.has(row - 1))) {
-    let savedTileNum = removeTile(board, row, col);
-    
-    if (savedTileNum === board[row - 1][col]) {
-      savedTileNum *= 2;
-
-      gameState.tileCount--;
-      mergedRows.set(row - 1, true);
-    }
-
-    placeTile(board, row - 1, col, savedTileNum);
-
-    if (!currentMove.boardHasChanged) currentMove.boardHasChanged = true;
-
-    row--;
-  }
-
-  return row;
 };
 
 function moveLeft(board, gameState) {
