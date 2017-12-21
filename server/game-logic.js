@@ -15,7 +15,10 @@ function initBoard(n = 4) {
 const piecesPlacedLegend = {
   count: 0,
   rows: new Map(),
-  cols: new Map()
+  cols: new Map(),
+  currentMove: {
+    boardHasChanged: false
+  }
 };
 
 function placeTileRandomly(board, piecesPlacedLegend) {
@@ -77,23 +80,45 @@ function neighborTilesAreSame(board, row1, col1, row2, col2) {
     && board[row1][col1] === board[row2][col2];
 };
 
+function twoMapsDeepEqual(map1, map2) {
+  if (map1.size !== map2.size) return false;
+
+  for (let [key1, val1] of map1) {
+    if (map2.get(key1) !== val1) return false;
+  }
+
+  for (let [key2, val2] of map2) {
+    if (map1.get(key2) !== val2) return false;
+  }
+
+  return true;
+};
+
 function moveDown(board, piecesPlacedLegend) {
   const n = board.length;
-  const { cols } = piecesPlacedLegend;
+  const { cols, rows, currentMove } = piecesPlacedLegend;
   const updatedRows = new Map();
 
   for (let [col] of cols) {
     for (let row = n - 1; row >= 0; row--) {
       if (isOccupiedAtCoord(board, row, col)) {
-        let updatedRow = moveTileDown(board, row, col); 
+        let updatedRow = moveTileDown(board, row, col, piecesPlacedLegend); 
         updatedRows.set(updatedRow, true);
       }
     }
   }
+
   piecesPlacedLegend.rows = updatedRows;
+  
+  if (currentMove.boardHasChanged) {
+    placeTileRandomly(board, piecesPlacedLegend);
+    
+    currentMove.boardHasChanged = false;
+  }
 };
 
-function moveTileDown(board, row, col) {
+function moveTileDown(board, row, col, piecesPlacedLegend) {
+  const { currentMove } = piecesPlacedLegend;
   let mergedFlag = false;
 
   while (isVacantAtCoord(board, row + 1, col)
@@ -103,9 +128,13 @@ function moveTileDown(board, row, col) {
     if (savedTileNum === board[row + 1][col]) {
       savedTileNum *= 2;
       mergedFlag = true;
+
+      piecesPlacedLegend.count--;
     }
 
     placeTile(board, row + 1, col, savedTileNum);
+
+    if (!currentMove.boardHasChanged) currentMove.boardHasChanged = true;
 
     row++;
   }
@@ -113,8 +142,41 @@ function moveTileDown(board, row, col) {
   return row;
 };
 
-function moveUp() {
+function moveUp(board, piecesPlacedLegend) {
+  const n = board.length;
+  const { cols, rows } = piecesPlacedLegend;
+  const updatedRows = new Map();
 
+  for (let [col] of cols) {
+    for (let row = 0; row < n; row++) {
+      if (isOccupiedAtCoord(board, row, col)) {
+        let updatedRow = moveTileUp(board, row, col); 
+        updatedRows.set(updatedRow, true);
+      }
+    }
+  }
+  
+  piecesPlacedLegend.rows = updatedRows;
+};
+
+function moveTileUp(board, row, col) {
+  let mergedFlag = false;
+
+  while (isVacantAtCoord(board, row - 1, col)
+    || (neighborTilesAreSame(board, row, col, row - 1, col) && !mergedFlag)) {
+    let savedTileNum = removeTile(board, row, col);
+    
+    if (savedTileNum === board[row - 1][col]) {
+      savedTileNum *= 2;
+      mergedFlag = true;
+    }
+
+    placeTile(board, row - 1, col, savedTileNum);
+
+    row--;
+  }
+
+  return row;
 };
 
 function checkForLoser() {
@@ -129,5 +191,7 @@ module.exports = {
   isValidBoardCoord,
   getRandomBtwnZeroAndN,
   getTwoOrFour,
-  moveDown
+  twoMapsDeepEqual,
+  moveDown,
+  moveUp,
 };
