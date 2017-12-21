@@ -7,7 +7,8 @@ const {
   moveDown,
   moveUp,
   moveLeft,
-  moveRight
+  moveRight,
+  makeMove
 } = require('./game/game-logic');
 
 let gameState = {
@@ -37,10 +38,10 @@ app.get('/getBoard', (req, res) => {
 app.post('/postMove', (req, res) => {
   const { move } = req.body;
 
-  if (move === 40) moveDown(board, gameState);
-  if (move === 38) moveUp(board, gameState);
-  if (move === 37) moveLeft(board, gameState);
-  if (move === 39) moveRight(board, gameState);
+  if (move === 40) makeMove(board, gameState, 'down');
+  if (move === 38) makeMove(board, gameState, 'up');
+  if (move === 37) makeMove(board, gameState, 'left');
+  if (move === 39) makeMove(board, gameState, 'right');
 
   res.end();
 });

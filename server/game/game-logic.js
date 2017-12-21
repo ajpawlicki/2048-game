@@ -37,11 +37,6 @@ const gameState = {
 
 function placeTileRandomly(board, gameState) {
   const n = board.length;
-
-  if (gameState.tileCount === (n * n)) {
-    // check for loser
-    return null;
-  }
   
   let row = null;
   let col = null;
@@ -72,12 +67,6 @@ function moveDown(board, gameState) {
     }
 
     currentMove.mergedRows.clear();
-  }
-  
-  if (currentMove.boardHasChanged) {
-    placeTileRandomly(board, gameState);
-    
-    currentMove.boardHasChanged = false;
   }
 };
 
@@ -121,12 +110,6 @@ function moveUp(board, gameState) {
 
     currentMove.mergedRows.clear();
   }
-  
-  if (currentMove.boardHasChanged) {
-    placeTileRandomly(board, gameState);
-    
-    currentMove.boardHasChanged = false;
-  }
 };
 
 function moveLeft(board, gameState) {
@@ -143,12 +126,6 @@ function moveLeft(board, gameState) {
     }
 
     currentMove.mergedCols.clear();
-  }
-  
-  if (currentMove.boardHasChanged) {
-    placeTileRandomly(board, gameState);
-    
-    currentMove.boardHasChanged = false;
   }
 };
 
@@ -192,7 +169,18 @@ function moveRight(board, gameState) {
 
     currentMove.mergedCols.clear();
   }
-  
+};
+
+function makeMove(board, gameState, direction) {
+  if (!direction) throw new Error("Need to input a direction: 'left', 'right', 'down', or 'up'.");
+
+  const { currentMove } = gameState;
+
+  if (direction === 'left') moveLeft(board, gameState);
+  if (direction === 'right') moveRight(board, gameState);
+  if (direction === 'up') moveUp(board, gameState);
+  if (direction === 'down') moveDown(board, gameState);
+
   if (currentMove.boardHasChanged) {
     placeTileRandomly(board, gameState);
     
@@ -214,5 +202,6 @@ module.exports = {
   moveDown,
   moveUp,
   moveLeft,
-  moveRight
+  moveRight,
+  makeMove
 };
