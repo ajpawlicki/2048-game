@@ -6,7 +6,8 @@ const {
   isValidBoardCoord,
   getRandomBtwnZeroAndN,
   getTwoOrFour,
-  moveDown
+  moveDown,
+  twoMapsDeepEqual
 } = require('../server/game-logic');
 
 describe('Testing 2048 game logic functions', () => {
@@ -146,6 +147,70 @@ describe('Testing 2048 game logic functions', () => {
       for (let i = 1; i < 50; i++) {
         expect(getRandomBtwnZeroAndN(i)).toBeLessThan(i);
       }
+    });
+  });
+
+  describe('twoMapsDeepEqual', () => {
+    it('Detects if two maps are equal', () => {
+      const map1 = new Map();
+      const map2 = new Map();
+      
+      map1.set(4, true);
+      map2.set(4, true);
+
+      map1.set('AJ', 'Snow');
+      map2.set('AJ', 'Snow');
+
+      map1.set('Cubbies', 1);
+      map2.set('Cubbies', 1);
+
+      expect(twoMapsDeepEqual(map1, map2)).toBeTruthy();
+    });
+    
+    it('Detects if two maps are not equal', () => {
+      const map1 = new Map();
+      const map2 = new Map();
+      
+      map1.set(4, true);
+      map2.set(4, true);
+
+      map1.set('Big', 'Blue');
+      map2.set('AJ', 'Snow');
+
+      map1.set('Cubbies', 1);
+      map2.set('Cubbies', 1);
+
+      expect(twoMapsDeepEqual(map1, map2)).toBeFalsy();
+    });
+
+    it('Correctly detects two maps are not equal when first map has an extra key-value pair', () => {
+      const map1 = new Map();
+      const map2 = new Map();
+      
+      map1.set(4, true);
+      map2.set(4, true);
+
+      map1.set('AJ', 'Snow');
+
+      map1.set('Cubbies', 1);
+      map2.set('Cubbies', 1);
+
+      expect(twoMapsDeepEqual(map1, map2)).toBeFalsy();
+    });
+
+    it('Correctly detects two maps are not equal when second map has an extra key-value pair', () => {
+      const map1 = new Map();
+      const map2 = new Map();
+      
+      map1.set(4, true);
+      map2.set(4, true);
+
+      map2.set('AJ', 'Snow');
+
+      map1.set('Cubbies', 1);
+      map2.set('Cubbies', 1);
+
+      expect(twoMapsDeepEqual(map1, map2)).toBeFalsy();
     });
   });
 });
