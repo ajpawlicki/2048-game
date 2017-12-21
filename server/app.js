@@ -5,7 +5,8 @@ const {
   initBoard,
   placeTileRandomly,
   moveDown,
-  moveUp
+  moveUp,
+  moveLeft,
 } = require('./game/game-logic');
 
 let gameState = {
@@ -37,6 +38,8 @@ app.post('/postMove', (req, res) => {
 
   if (move === 40) moveDown(board, gameState);
   if (move === 38) moveUp(board, gameState);
+  if (move === 37) moveLeft(board, gameState);
+
   res.end();
 });
 
