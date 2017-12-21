@@ -28,7 +28,6 @@ function renderBoard(board, boardEl) {
 
     boardEl.appendChild(rowEl);
   });
-
 };
 
 function emptyElement(element) {

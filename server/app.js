@@ -8,18 +8,20 @@ const {
   moveUp
 } = require('./game-logic');
 
-let piecesPlacedLegend = {
-  count: 0,
+let gameState = {
+  tileCount: 0,
   rows: new Map(),
   cols: new Map(),
   currentMove: {
-    boardHasChanged: false
+    boardHasChanged: false,
+    mergedRows: new Map(),
+    mergedCols: new Map()
   }
 };
 
 let board = initBoard();
-placeTileRandomly(board, piecesPlacedLegend);
-placeTileRandomly(board, piecesPlacedLegend);
+placeTileRandomly(board, gameState);
+placeTileRandomly(board, gameState);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,8 +35,8 @@ app.get('/getBoard', (req, res) => {
 app.post('/postMove', (req, res) => {
   const { move } = req.body;
 
-  if (move === 40) moveDown(board, piecesPlacedLegend);
-  if (move === 38) moveUp(board, piecesPlacedLegend);
+  if (move === 40) moveDown(board, gameState);
+  if (move === 38) moveUp(board, gameState);
   res.end();
 });
 
