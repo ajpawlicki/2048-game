@@ -202,6 +202,58 @@ function moveTileLeft(board, row, col, gameState) {
   return col;
 };
 
+function moveRight(board, gameState) {
+  const n = board.length;
+  const { cols, rows, currentMove } = gameState;
+  cols.clear();
+
+  for (let [row, val] of rows) {
+    for (let col = n - 1; col >= 0; col--) {
+      if (isOccupiedAtCoord(board, row, col)) {
+        let updatedCol = moveTileRight(board, row, col, gameState);
+        cols.set(updatedCol, true);
+      }
+    }
+
+    currentMove.mergedCols.clear();
+  }
+  
+  if (currentMove.boardHasChanged) {
+    placeTileRandomly(board, gameState);
+    
+    currentMove.boardHasChanged = false;
+  }
+};
+
+function moveTileRight(board, row, col, gameState) {
+  const { currentMove } = gameState;
+  const { mergedCols } = currentMove;
+
+  while (isVacantAtCoord(board, row, col + 1) || (neighborTilesAreSame(board, row, col, row, col + 1)
+    && !mergedCols.has(col) && !mergedCols.has(col + 1))) {
+    let savedTileNum = removeTile(board, row, col);
+    
+    if (savedTileNum === board[row][col + 1]) {
+      savedTileNum *= 2;
+
+      gameState.tileCount--;
+      mergedCols.set(col + 1, true);
+    }
+
+    placeTile(board, row, col + 1, savedTileNum);
+
+    if (!currentMove.boardHasChanged) currentMove.boardHasChanged = true;
+
+    col++;
+  }
+
+  return col;
+};
+
+function isBoardFull(board) {
+  
+};
+
 function checkForLoser() {
 
 };
@@ -212,4 +264,5 @@ module.exports = {
   moveDown,
   moveUp,
   moveLeft,
+  moveRight
 };
