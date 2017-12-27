@@ -1,5 +1,6 @@
 body {
   text-align: center;
+  font-family: system-ui, sans-serif;
 }
 
 .board {
@@ -11,4 +12,19 @@ body {
   width: 40px;
   height: 40px;
   border: 1px solid black;
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.restart-button {
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.alert {
+  margin-top: 1rem;
 }

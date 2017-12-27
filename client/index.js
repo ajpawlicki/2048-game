@@ -1,12 +1,18 @@
 window.onload = () => {
   const boardEl = document.querySelector('.board');
+  const alertEl = document.querySelector('.alert');
+  const restartButtonEl = document.querySelector('.restart-button');
   
   fetchBoard(boardEl);
   
   document.body.addEventListener('keydown', event => {
     if (event.keyCode >= 37 && event.keyCode <= 40) {
-      postMove({ move: event.keyCode }, boardEl);
+      postMove({ move: event.keyCode }, boardEl, alertEl);
     }
+  });
+
+  restartButtonEl.addEventListener('click', event => {
+    restartGame(boardEl, alertEl);
   });
 };
 
@@ -45,7 +51,7 @@ function fetchBoard(boardEl) {
   .catch(err => console.error(err));
 };
 
-function postMove(data, boardEl) {
+function postMove(data, boardEl, alertEl) {
   fetch('postMove', {
     method: 'POST',
     headers: {
@@ -54,6 +60,23 @@ function postMove(data, boardEl) {
     },
     body: JSON.stringify(data)
   })
-  .then(res => fetchBoard(boardEl))
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) alertEl.innerHTML = data.error;
+    if (!data.error) alertEl.innerHTML = '';
+
+    fetchBoard(boardEl);
+  })
+  .catch(err => console.error(err));
+};
+
+function restartGame(boardEl, alertEl) {
+  fetch('restart', {
+    method: 'PUT'
+  })
+  .then(res => {
+    fetchBoard(boardEl);
+    alertEl.innerHTML = '';
+  })
   .catch(err => console.error(err));
 };
