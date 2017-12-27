@@ -7,7 +7,6 @@ const {
   removeTile,
   placeTile,
   neighborTilesAreSame,
-  twoMapsDeepEqual,
 } = require('./game-helpers');
 
 function initBoard(n = 4) {
@@ -185,15 +184,38 @@ function makeMove(board, gameState, direction) {
     placeTileRandomly(board, gameState);
     
     currentMove.boardHasChanged = false;
+  } else {
+    if (isBoardFull(board) && checkForLoser(board)) {
+      throw new Error('Game is over.');
+    }
   }
 };
 
 function isBoardFull(board) {
-  
+  const n = board.length;
+
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (board[i][j] === null) return false;
+    }
+  }
+
+  return true;
 };
 
-function checkForLoser() {
+function checkForLoser(board) {
+  const n = board.length;
 
+  for (let row = 0; row < n; row++) {
+    for (let col = 0; col < n; col++) {
+      if (neighborTilesAreSame(board, row, col, row + 1, col) ||
+        neighborTilesAreSame(board, row, col, row - 1, col) ||
+        neighborTilesAreSame(board, row, col, row, col + 1) ||
+        neighborTilesAreSame(board, row, col, row, col - 1)) return false;
+    }
+  }
+
+  return true;
 };
 
 module.exports = {
@@ -203,5 +225,6 @@ module.exports = {
   moveUp,
   moveLeft,
   moveRight,
-  makeMove
+  makeMove,
+  isBoardFull
 };
