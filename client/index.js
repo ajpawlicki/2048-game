@@ -2,6 +2,7 @@ window.onload = () => {
   const boardEl = document.querySelector('.board');
   const alertEl = document.querySelector('.alert');
   const restartButtonEl = document.querySelector('.restart-button');
+  const boardSizeSelectEl = document.querySelector('#board-size-select');
   
   fetchBoard(boardEl);
   
@@ -12,7 +13,7 @@ window.onload = () => {
   });
 
   restartButtonEl.addEventListener('click', event => {
-    restartGame(boardEl, alertEl);
+    restartGame({ size: boardSizeSelectEl.value }, boardEl, alertEl);
   });
 };
 
@@ -70,9 +71,14 @@ function postMove(data, boardEl, alertEl) {
   .catch(err => console.error(err));
 };
 
-function restartGame(boardEl, alertEl) {
+function restartGame(data, boardEl, alertEl) {
   fetch('restart', {
-    method: 'PUT'
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/json, text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
   })
   .then(res => {
     fetchBoard(boardEl);

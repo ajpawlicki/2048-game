@@ -53,7 +53,9 @@ app.post('/postMove', (req, res) => {
 });
 
 app.put('/restart', (req, res) => {
-  board = initBoard();
+  const { size } = req.body;
+
+  board = initBoard(+size);
   gameState = {
     tileCount: 0,
     rows: new Map(),
