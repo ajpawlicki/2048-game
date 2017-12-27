@@ -37,6 +37,7 @@ app.get('/getBoard', (req, res) => {
 
 app.post('/postMove', (req, res) => {
   const { move } = req.body;
+  const responseData = {}
 
   try {
     if (move === 40) makeMove(board, gameState, 'down');
@@ -45,7 +46,27 @@ app.post('/postMove', (req, res) => {
     if (move === 39) makeMove(board, gameState, 'right');
   } catch (err) {
     console.error(err);
+    responseData.error = err.message;
   }
+
+  res.send(responseData);
+});
+
+app.put('/restart', (req, res) => {
+  board = initBoard();
+  gameState = {
+    tileCount: 0,
+    rows: new Map(),
+    cols: new Map(),
+    currentMove: {
+      boardHasChanged: false,
+      mergedRows: new Map(),
+      mergedCols: new Map()
+    }
+  };
+
+  placeTileRandomly(board, gameState);
+  placeTileRandomly(board, gameState);
 
   res.end();
 });
