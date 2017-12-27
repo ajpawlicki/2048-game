@@ -16,7 +16,7 @@ const {
   twoMapsDeepEqual,
 } = require('../server/game/game-helpers');
 
-describe('Testing 2048 game logic functions', () => {
+describe('Testing 2048 game helper functions', () => {
 
   describe('isValidBoardCoord', () => {
     it('Returns true for a valid row and col', () => {
