@@ -38,10 +38,14 @@ app.get('/getBoard', (req, res) => {
 app.post('/postMove', (req, res) => {
   const { move } = req.body;
 
-  if (move === 40) makeMove(board, gameState, 'down');
-  if (move === 38) makeMove(board, gameState, 'up');
-  if (move === 37) makeMove(board, gameState, 'left');
-  if (move === 39) makeMove(board, gameState, 'right');
+  try {
+    if (move === 40) makeMove(board, gameState, 'down');
+    if (move === 38) makeMove(board, gameState, 'up');
+    if (move === 37) makeMove(board, gameState, 'left');
+    if (move === 39) makeMove(board, gameState, 'right');
+  } catch (err) {
+    console.error(err);
+  }
 
   res.end();
 });
