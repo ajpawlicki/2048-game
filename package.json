@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/ajpawlicki/2048-game#readme",
   "dependencies": {
-    "express": "^4.16.2",
-    "jest": "^22.0.3"
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "jest": "^22.0.4"
   }
 }
