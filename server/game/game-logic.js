@@ -185,7 +185,7 @@ function makeMove(board, gameState, direction) {
     
     currentMove.boardHasChanged = false;
   } else {
-    if (isBoardFull(board) && checkForLoser(board)) {
+    if (checkForLoser(board)) {
       throw new Error('Game is over.');
     }
   }
@@ -196,7 +196,7 @@ function isBoardFull(board) {
 
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
-      if (board[i][j] === null) return false;
+      if (isVacantAtCoord(board, i, j)) return false;
     }
   }
 
@@ -208,7 +208,8 @@ function checkForLoser(board) {
 
   for (let row = 0; row < n; row++) {
     for (let col = 0; col < n; col++) {
-      if (neighborTilesAreSame(board, row, col, row + 1, col) ||
+      if (isVacantAtCoord(board, row, col) ||
+        neighborTilesAreSame(board, row, col, row + 1, col) ||
         neighborTilesAreSame(board, row, col, row - 1, col) ||
         neighborTilesAreSame(board, row, col, row, col + 1) ||
         neighborTilesAreSame(board, row, col, row, col - 1)) return false;
@@ -226,5 +227,6 @@ module.exports = {
   moveLeft,
   moveRight,
   makeMove,
-  isBoardFull
+  isBoardFull,
+  checkForLoser
 };
